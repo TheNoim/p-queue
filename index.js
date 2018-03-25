@@ -139,6 +139,7 @@ class PQueue {
 			} else {
 				this.queue.enqueue(run, opts);
 			}
+			this._event('add');
 		});
 	}
 
@@ -155,14 +156,17 @@ class PQueue {
 		while (this.queue.size > 0 && this._pendingCount < this._concurrency) {
 			this.queue.dequeue()();
 		}
+		this._event('start');
 	}
 
 	pause() {
 		this._isPaused = true;
+		this._event('pause');
 	}
 
 	clear() {
 		this.queue = new this._queueClass(); // eslint-disable-line new-cap
+		this._event('clear');
 	}
 
 	onEmpty() {
