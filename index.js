@@ -70,6 +70,32 @@ class PQueue {
 		this._isPaused = opts.autoStart === false;
 		this._resolveEmpty = () => {};
 		this._resolveIdle = () => {};
+		this.eventHandler = {};
+	}
+
+	on(eventName, handler) {
+		if (!Array.isArray(this.eventHandler[eventName])) this.eventHandler[eventName] = [];
+		this.eventHandler[eventName].push(handler);
+	}
+
+	removeEventHandler(eventName, handler) {
+		if (!Array.isArray(this.eventHandler[eventName])) return true;
+		for (const k in this.eventHandler[eventName]) {
+			if (!this.eventHandler[eventName].hasOwnProperty(k)) continue;
+			if (this.eventHandler[eventName][k] === handler) {
+				this.eventHandler[eventName].splice(k, 1);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	_event(eventName) {
+		if (!Array.isArray(this.eventHandler[eventName])) return true;
+		for (const k in this.eventHandler[eventName]) {
+			if (!this.eventHandler[eventName].hasOwnProperty(k)) continue;
+			if (typeof this.eventHandler[eventName][k] === 'function') this.eventHandler[eventName][k]();
+		}
 	}
 
 	_next() {
