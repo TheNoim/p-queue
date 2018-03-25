@@ -102,12 +102,15 @@ class PQueue {
 		this._pendingCount--;
 
 		if (!this._isPaused && this.queue.size > 0) {
+			this._event('next');
 			this.queue.dequeue()();
 		} else {
+			this._event('empty');
 			this._resolveEmpty();
 			this._resolveEmpty = () => {};
 
 			if (this._pendingCount === 0) {
+				this._event('idle');
 				this._resolveIdle();
 				this._resolveIdle = () => {};
 			}
